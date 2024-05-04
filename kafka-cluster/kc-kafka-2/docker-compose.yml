@@ -1,0 +1,32 @@
+version: '3'
+networks:
+  kafka-cluster:
+    external: true
+  zookeeper-cluster:  #引入zookeeper的容器网络
+    external: true
+services:
+  kc-kafka-2:
+    image: bitnami/kafka:3.3.2
+    container_name: kc-kafka-2
+    hostname: kafka-2
+    networks:
+      - kafka-cluster
+      - zookeeper-cluster
+    ports:
+      - "9093:9092"
+    environment:
+      TZ: Asia/Shanghai
+#      以下配置，放入到server.properties管理
+#      KAFKA_BROKER_ID: 1
+#      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka-2:9092
+#      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper-1:2181,zookeeper-2:2182,zookeeper-3:2183
+    volumes:
+      # kafka服务器配置文件
+      - ./conf/server.properties:/opt/bitnami/kafka/config/server.properties
+      # kafka数据
+      - ./data/kafka:/tmp/kafka-logs:rw
+      # kafka运行日志配置文件
+      - ./conf/log4j.properties:/opt/bitnami/kafka/config/log4j.properties
+      # kafka运行日志存放文件夹
+      - ./data/logs:/opt/bitnami/kafka/logs:rw

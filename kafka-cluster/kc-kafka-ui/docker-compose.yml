@@ -1,0 +1,22 @@
+version: '3'
+networks:
+  kafka-cluster:
+    external: true
+  zookeeper-cluster: #引入zookeeper的容器网络
+    external: true
+services:
+  kc-kafka-ui:
+    image: provectuslabs/kafka-ui:53a6553765a806eda9905c43bfcfe09da6812035
+    container_name: kc-kafka-ui
+    hostname: kafka-ui
+    networks:
+      - kafka-cluster
+      - zookeeper-cluster
+    ports:
+      - "9095:8080"
+    environment:
+      TZ: Asia/Shanghai
+      DYNAMIC_CONFIG_ENABLED: 'false'
+      spring.config.additional-location: '/tmp/spring-boot-config.yml'
+    volumes:
+      - ./conf/spring-boot-config.yml:/tmp/spring-boot-config.yml

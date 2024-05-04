@@ -1,0 +1,15 @@
+version: '3'
+services:
+  nginx:
+    image: 'openresty/openresty:1.21.4.1-7-centos7'
+    container_name: openresty-1.21.4
+    hostname: openresty1214
+    volumes:
+      - ./nginx/html:/usr/local/openresty/nginx/html
+      - ./nginx/config/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/config/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf:ro
+      - ./nginx/logs:/usr/local/openresty/nginx/logs
+    ports:
+      - "80:80"
+    environment:
+      TZ: Asia/Shanghai

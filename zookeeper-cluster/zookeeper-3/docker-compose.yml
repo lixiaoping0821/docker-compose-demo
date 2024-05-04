@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  zookeeper-cluster:
+    external: true
+services:
+  zookeeper-3:
+    image: zookeeper:3.8.0
+    container_name: zookeeper-3
+    hostname: zookeeper-3
+    networks:
+      - zookeeper-cluster
+    privileged: true
+    volumes:
+      - ./data:/data:rw
+      - ./datalog:/datalog:rw
+      - ./conf:/conf:rw
+    ports:
+      - "2183:2181"
+    environment:
+      TZ: Asia/Shanghai
+      ZOO_MY_ID: 3

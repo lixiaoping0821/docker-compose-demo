@@ -1,0 +1,7 @@
+i18n.locale: zh-CN
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: "http://mke-es:9200"    # 对应es容器的host名
+server.name: kibana
+monitoring.ui.container.elasticsearch.enabled: true
+xpack.reporting.roles.enabled: false

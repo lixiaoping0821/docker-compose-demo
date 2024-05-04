@@ -1,0 +1,40 @@
+cluster.name:  "elk_es_cluster"  # 配置的集群名称，默认是elasticsearch
+node.name: "elk_es_node01"       # 当前ES实例的节点名
+discovery.type: single-node    # 样例采用单节点运行方式
+node.roles: [master,data,remote_cluster_client]  # 8.X的版本，需要使用 node.roles配置角色
+bootstrap.memory_lock: true      # 启用内存限制，避免硬盘JVM垃圾回收引起的频繁读取硬盘
+network.host: 0.0.0.0            # 同时绑定外部访问和节点之间交互的IP地址
+http.port: 9200                  # 外部访问端口
+transport.port: 9300         # 节点之间交互的端口名
+path.logs: /usr/share/elasticsearch/logs    #日志路径
+http.cors.enabled: true        # 启用跨域设置
+http.cors.allow-origin: "*"    # 方便测试，允许所有域名
+
+#----------------------- BEGIN SECURITY AUTO CONFIGURATION -----------------------
+#
+# The following settings, TLS certificates, and keys have been automatically
+# generated to configure Elasticsearch security features
+#
+# --------------------------------------------------------------------------------
+
+# Enable security features
+xpack.security.enabled: false
+
+xpack.security.enrollment.enabled: false
+
+# Enable encryption for HTTP API client connections, such as Kibana, Logstash, and Agents
+xpack.security.http.ssl:
+  enabled: false
+#  keystore.path: certs/http.p12
+
+# Enable encryption and mutual authentication between cluster nodes
+xpack.security.transport.ssl:
+  enabled: false
+#  verification_mode: certificate
+#  keystore.path: certs/transport.p12
+#  truststore.path: certs/transport.p12
+# Create a new cluster with the current node only
+# Additional nodes can still join the cluster later
+#cluster.initial_master_nodes: ["elk"]
+
+#----------------------- END SECURITY AUTO CONFIGURATION -------------------------

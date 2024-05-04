@@ -1,0 +1,8 @@
+
+/flink-checkpoints/
+
+/flink-savepoints/
+
+/logs/
+
+/runjob/

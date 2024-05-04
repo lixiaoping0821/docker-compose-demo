@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  mysql-cluster:
+    external: true
+services:
+  mysql-slave:
+    image: mysql:8.0.36
+    container_name: mysql-slave
+    hostname: mysql-slave
+    networks:
+      - mysql-cluster
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Shanghai
+    ports:
+      - "3307:3306" # 同一台机器要和主节点端口不通
+    volumes:
+      - ./config:/etc/mysql/conf.d
+      # - ./config:/etc/my.cnf.d
+      - ./data:/var/lib/mysql
+      - ./logs:/var/log/mysql

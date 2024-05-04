@@ -1,0 +1,13 @@
+i18n.locale: zh-CN
+server.host: "0.0.0.0"
+server.shutdownTimeout: "5s"
+elasticsearch.hosts: "http://es:9200"    # 对应es容器的host名
+server.name: kibana
+monitoring.ui.container.elasticsearch.enabled: true
+xpack.reporting.roles.enabled: false
+#elasticsearch.username: "admin"
+#elasticsearch.password: "admin123"
+#xpack.monitoring.enabled: true
+#xpack.monitoring.elasticsearch.hosts: ["http://elk-es:9200"]
+#xpack.monitoring.kibana.collection.enabled: true
+#xpack.monitoring.kibana.collection.interval: 10000

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  emq:
+    image: emqx:5.0.20
+    container_name: emqx5
+    volumes:
+      - ./data:/opt/emqx/data:rw
+      - ./etc:/opt/emqx/etc:rw
+      - ./log:/opt/emqx/log:rw
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"
+      - "8883:8883"
+      - "18083:18083"

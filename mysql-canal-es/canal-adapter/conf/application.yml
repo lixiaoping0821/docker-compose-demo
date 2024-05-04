@@ -1,0 +1,98 @@
+server:
+  port: 8081
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    default-property-inclusion: non_null
+
+canal.conf:
+  mode: kafka #tcp kafka rocketMQ rabbitMQ
+  flatMessage: true
+  zookeeperHosts:
+  syncBatchSize: 1000
+  retries: 0
+  timeout:
+  accessKey:
+  secretKey:
+  consumerProperties:
+    # canal tcp consumer
+    #    canal.tcp.server.host: canalserver:11111
+    #    canal.tcp.zookeeper.hosts:
+    #    canal.tcp.batch.size: 500
+    #    canal.tcp.username:
+    #    canal.tcp.password:
+    # kafka consumer
+    kafka.bootstrap.servers: mke-kafka:9092
+    kafka.enable.auto.commit: false
+    kafka.auto.commit.interval.ms: 1000
+    kafka.auto.offset.reset: latest
+    kafka.request.timeout.ms: 40000
+    kafka.session.timeout.ms: 30000
+    kafka.isolation.level: read_committed
+    kafka.max.poll.records: 1000
+    # rocketMQ consumer
+    #    rocketmq.namespace:
+    #    rocketmq.namesrv.addr: 127.0.0.1:9876
+    #    rocketmq.batch.size: 1000
+    #    rocketmq.enable.message.trace: false
+    #    rocketmq.customized.trace.topic:
+    #    rocketmq.access.channel:
+    #    rocketmq.subscribe.filter:
+    # rabbitMQ consumer
+  #    rabbitmq.host:
+  #    rabbitmq.virtual.host:
+  #    rabbitmq.username:
+  #    rabbitmq.password:
+  #    rabbitmq.resource.ownerId:
+
+  srcDataSources:
+    defaultDS:
+      url: jdbc:mysql://mke-mysql:3306/world?useUnicode=true
+      username: canal
+      password: canal
+  canalAdapters:
+    - instance: worldplant # canal配置文件instance.properties中的消息队列主题
+      groups:
+        # 同一个分组下可以有多个适配输出
+        - groupId: g1  # 自定义
+          outerAdapters:
+            - name: logger
+            - name: es7          # 自动加载 conf/es7 下的所有.yml结尾的配置文件，这里只能填写es6或者es7
+              hosts: mke-es:9200 # 通过es在容器内网的hostname访问
+              properties:
+                mode: rest
+                # security.auth: test:123456 #  only used for rest mode
+                cluster.name: mke_es_cluster # es实例配置的集群名
+            #      - name: rdb
+            #        key: mysql1
+            #        properties:
+            #          jdbc.driverClassName: com.mysql.jdbc.Driver
+            #          jdbc.url: jdbc:mysql://127.0.0.1:3306/mytest2?useUnicode=true
+            #          jdbc.username: root
+            #          jdbc.password: 121212
+            #      - name: rdb
+            #        key: oracle1
+            #        properties:
+            #          jdbc.driverClassName: oracle.jdbc.OracleDriver
+            #          jdbc.url: jdbc:oracle:thin:@localhost:49161:XE
+            #          jdbc.username: mytest
+            #          jdbc.password: m121212
+            #      - name: rdb
+            #        key: postgres1
+            #        properties:
+            #          jdbc.driverClassName: org.postgresql.Driver
+            #          jdbc.url: jdbc:postgresql://localhost:5432/postgres
+            #          jdbc.username: postgres
+            #          jdbc.password: 121212
+            #          threads: 1
+            #          commitSize: 3000
+            #      - name: hbase
+            #        properties:
+            #          hbase.zookeeper.quorum: 127.0.0.1
+            #          hbase.zookeeper.property.clientPort: 2181
+            #          zookeeper.znode.parent: /hbase
+#        - name: kudu
+#          key: kudu
+#          properties:
+#            kudu.master.address: 127.0.0.1 # ',' split multi address

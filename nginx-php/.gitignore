@@ -1,0 +1,5 @@
+
+/nginx/logs/
+
+/nginx/www/***
+!/nginx/www/info.php

@@ -1,0 +1,18 @@
+filebeat.inputs:
+  - # 指定要监控的日志，可以指定具体得文件或者目录
+    paths:
+      - /usr/share/filebeat/nginx/*.log
+    # 指定文件的输入类型log(默认)或者stdin
+    type: log
+    enabled: true
+    # 自定义索引
+    fields.document_type: nginx-log
+    fields.service: nginx-log
+    tags: [ "nginx-log" ]
+
+filebeat.config.modules:
+  path: ${path.config}/modules.d/*.yml
+  reload.enabled: false
+
+output.logstash:
+  hosts: [ "elk-logstash:5044" ]

@@ -1,0 +1,9 @@
+/nginx/logs/*.log
+
+/elasticsearch/data/**
+/elasticsearch/logs/**
+
+/logstash/data/**
+/logstash/logs/**
+
+/filebeat/logs/filebeat*

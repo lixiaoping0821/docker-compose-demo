@@ -1,0 +1,13 @@
+/elasticsearch/data/**
+/elasticsearch/logs/**
+
+/mysql/logs/**
+/mysql/data/**
+
+/zookeeper/data/**
+/zookeeper/datalog/**
+
+/kafka/data/**
+
+/canal/logs/**
+

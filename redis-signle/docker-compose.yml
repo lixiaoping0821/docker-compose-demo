@@ -1,0 +1,14 @@
+version: '3'
+services:
+  redis-single:
+    image: redis:7.0.9
+    container_name: redis7
+    environment:
+      TZ: Asia/Shanghai
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./master-data:/data:rw
+      - ./conf/redis.conf:/etc/redis/redis.conf:rw
+      - ./logs:/var/log/redis:rw
+    command: [ "redis-server","/etc/redis/redis.conf" ]

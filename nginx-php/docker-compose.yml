@@ -1,0 +1,30 @@
+version: '3'
+services:
+  nginx:
+    image: nginx:1.23.2
+    container_name: php-nginx-1.23.2
+    hostname: nginx1232
+    volumes:
+      - ./nginx/www:/usr/share/nginx/www:rw
+      - ./nginx/config/conf.d:/etc/nginx/conf.d:ro
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/logs:/var/log/nginx
+    ports:
+      - "80:80"
+    environment:
+      TZ: Asia/Shanghai
+    depends_on:
+      - php-fpm
+  php-fpm:
+    image: php:7.1-fpm
+    container_name: php-fpm-7.1
+    hostname: phpfpm7.1
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./nginx/www:/usr/share/nginx/www:rw
+      - ./php/php.ini:/usr/local/etc/php/php.ini:rw
+      - ./php/ext:/usr/local/include/php/ext:rw
+      - ./php/extensions/no-debug-non-zts-20160303:/usr/local/lib/php/extensions/no-debug-non-zts-20160303:rw
+    environment:
+      TZ: Asia/Shanghai

@@ -1,0 +1,34 @@
+version: '3'
+services:
+  jobmanager:
+    image: flink:1.16.1-java8
+    expose:
+      - "6123"
+    ports:
+      - "8081:8081"
+    command: jobmanager
+    volumes:
+      - ./flink-checkpoints:/opt/flink/flink-checkpoints
+      - ./flink-savepoints:/opt/flink/flink-savepoints
+      - ./logs/job:/opt/flink/log
+      - ./runjob:/opt/flink/usrlib
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      TZ: Asia/Shanghai
+  taskmanager:
+    image: flink:1.16.1-java8
+    expose:
+      - "6121"
+      - "6122"
+    depends_on:
+      - jobmanager
+    command: taskmanager
+      - ./flink/flink-checkpoints:/opt/flink/flink-checkpoints
+      - ./flink/flink-savepoints:/opt/flink/flink-savepoints
+      - ./flink/log/mngr:/opt/flink/log
+      - ./flink/runjob:/opt/flink/usrlib
+    links:
+      - "jobmanager:jobmanager"
+    environment:
+      JOB_MANAGER_RPC_ADDRESS: jobmanager
+      TZ: Asia/Shanghai

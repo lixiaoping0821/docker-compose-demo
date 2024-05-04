@@ -1,0 +1,97 @@
+version: '3'
+networks:
+  elk: # 申明专属网络
+    external: true
+services:
+  elasticsearch:
+    image: elastic/elasticsearch:8.12.1
+    container_name: elk-elasticsearch
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m" # 设置JAVA虚拟机内存占用大小
+    hostname: elk-es
+    networks:
+      - elk   # 指定专属网络
+    privileged: true
+    ulimits: # 栈内存的上限
+      memlock:
+        soft: -1    # 不限制警告线
+        hard: -1    # 不限制实际使用线
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:rw
+      - ./elasticsearch/config/log4j2.file.properties:/usr/share/elasticsearch/config/log4j2.file.properties:rw
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins:rw
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs:rw
+    ports:
+      - "9200:9200" #节点外部通信接口
+      - "9300:9300" # es集群节点之间的通信接口
+  kibana:
+    image: elastic/kibana:8.12.1
+    container_name: elk-kibana
+    environment:
+      - TZ=Asia/Shanghai
+    hostname: elk-kibana
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+    ports:
+      - "5601:5601"
+  logstash:
+    image: elastic/logstash:8.12.1
+    container_name: elk-logstash
+    hostname: elk-logstash
+    networks:
+      - elk
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/config/log4j2.properties:/usr/share/logstash/config/log4j2.properties
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:rw
+      - ./logstash/data:/usr/share/logstash/data:rw
+      - ./logstash/logs:/usr/share/logstash/logs:rw
+    depends_on:
+      - elasticsearch
+    ports:
+      - "9600:9600"
+      - "5044:5044"
+  filebeat:
+    image: elastic/filebeat:8.12.1
+    container_name: elk-filebeat
+    hostname: elk-filebeat
+    networks:
+      - elk
+    environment:
+      - TZ=Asia/Shanghai
+    depends_on:
+      - logstash
+    #windows下会有外部配置文件读写问题，这个权限检查需要关闭
+    command: --strict.perms=false
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml
+      - ./filebeat/logs/:/usr/share/filebeat/logs:rw
+      - ./nginx/logs:/usr/share/filebeat/nginx:rw
+  nginx:
+    image: nginx:1.25.3
+    container_name: elk-nginx
+    hostname: elk-nginx
+    networks:
+      - elk
+    expose:
+      - 80
+    ports:
+      - "8777:80"
+      - "4483:443"
+    volumes:
+      - ./nginx/logs:/var/log/nginx:rw
+      - ./nginx/config/nginx.conf:/etc/nginx/nginx.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100M"
+        max-file: "5"

@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  redis-cluster:
+    external: true
+services:
+  redis-1:
+    image: redis:7.0.9
+    container_name: redis-1
+    privileged: true
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - redis-cluster
+    ports:
+      - "6391:6391"
+      - "16391:16391"
+    volumes:
+      - ./master-data:/data:rw
+      - ./conf/redis.conf:/etc/redis/redis.conf:rw
+      - ./logs:/var/log/redis:rw
+    command: [ "redis-server","/etc/redis/redis.conf" ]

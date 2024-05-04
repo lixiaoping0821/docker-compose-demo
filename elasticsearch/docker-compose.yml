@@ -1,0 +1,43 @@
+version: '3'
+networks:
+  es: # 申明专属网络
+    external: true
+services:
+  es:
+    image: elastic/elasticsearch:8.12.1
+    container_name: es
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms3072m -Xmx3072m" # 设置JAVA虚拟机内存占用大小
+    hostname: es
+    networks:
+      - es   # 指定专属网络
+    privileged: true
+    ulimits: # 栈内存的上限
+      memlock:
+        soft: -1    # 不限制警告线
+        hard: -1    # 不限制实际使用线
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:rw
+      - ./elasticsearch/config/log4j2.file.properties:/usr/share/elasticsearch/config/log4j2.file.properties:rw
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins:rw
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs:rw
+    ports:
+      - "9200:9200" #节点外部通信接口
+      - "9300:9300" # es集群节点之间的通信接口
+  es-kibana:
+    image: elastic/kibana:8.12.1
+    container_name: es-kibana
+    environment:
+      - TZ=Asia/Shanghai
+    hostname: es-kibana
+    networks:
+      - es
+    depends_on:
+      - es
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+    ports:
+      - "5601:5601"

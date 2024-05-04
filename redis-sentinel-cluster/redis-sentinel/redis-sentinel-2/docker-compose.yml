@@ -1,0 +1,19 @@
+version: '3'
+networks:
+  redis-cluster:
+    external: true
+services:
+  redis-sentinel-2:
+    image: redis:7.0.9
+    container_name: redis-sentinel-2
+    privileged: true
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - redis-cluster
+    ports:
+      - "26380:26379"
+    volumes:
+      - ./conf:/usr/local/etc/redis:rw
+      - ./logs:/var/log/redis:rw
+    command: [ "redis-sentinel","/usr/local/etc/redis/sentinel.conf" ]

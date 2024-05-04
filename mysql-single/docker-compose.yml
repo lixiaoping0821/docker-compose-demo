@@ -1,0 +1,20 @@
+version: '3'
+services:
+  mysql-single:
+    image: mysql:5.7
+    container_name: mysql-single
+    environment:
+      MYSQL_DATABASE: root
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./config/my.cnf:/etc/mysql/my.cnf:rw
+      - ./data:/var/lib/mysql:rw
+      - ./logs:/var/log/mysql:rw
+    command:
+      --max_connections=1000
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_general_ci
+      --default-authentication-plugin=mysql_native_password

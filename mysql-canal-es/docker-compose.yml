@@ -1,0 +1,126 @@
+version: '3'
+networks:
+  mke:
+    external: true
+services:
+  mke-canal-server:
+    image: canal/canal-server:v1.1.7
+    container_name: mke-canal
+    hostname: mke-canal-server
+    networks:
+      - mke
+    ports:
+      - "11111:11111"
+    environment:
+      TZ: Asia/Shanghai
+    depends_on:
+      - mke-mysql
+      - mke-kafka
+    volumes:
+      - ./canal/conf/instance.properties:/home/admin/canal-server/conf/example/instance.properties:rw
+      - ./canal/conf/canal.properties:/home/admin/canal-server/conf/canal.properties:rw
+      - ./canal/logs/:/home/admin/canal-server/logs:rw
+  mke-canal-adapter:
+    image: slpcat/canal-adapter:v1.1.5
+    container_name: mke-canal-adapter
+    environment:
+      TZ: Asia/Shanghai
+    networks:
+      - mke
+    ports:
+      - "9081:8081"
+    depends_on:
+      - mke-kafka
+      - mke-canal-server
+      - mke-elasticsearch
+    volumes:
+      - ./canal-adapter/conf:/opt/canal-adapter/conf:rw
+  mke-zookeeper:
+    image: zookeeper:3.8.0
+    container_name: mke-zookeeper
+    hostname: mke-zookeeper
+    networks:
+      - mke
+    privileged: true
+    volumes:
+      - ./zookeeper/data:/data:rw
+      - ./zookeeper/datalog:/datalog:rw
+      - ./zookeeper/conf:/conf:rw
+    ports:
+      - "2181:2181"
+    environment:
+      TZ: Asia/Shanghai
+  mke-kafka:
+    image: bitnami/kafka:3.3.2
+    container_name: mke-kafka
+    hostname: mke-kafka
+    networks:
+      - mke
+    ports:
+      - "9092:9092"
+    environment:
+      TZ: Asia/Shanghai
+    volumes:
+      # kafka服务器配置文件
+      - ./kafka/conf/server.properties:/opt/bitnami/kafka/config/server.properties
+      # kafka数据
+      - ./kafka/data/kafka:/tmp/kafka-logs:rw
+      # kafka运行日志配置文件
+      - ./kafka/conf/log4j.properties:/opt/bitnami/kafka/config/log4j.properties
+      # kafka运行日志存放文件夹
+      - ./kafka/data/logs:/opt/bitnami/kafka/logs:rw
+    depends_on:
+      - mke-zookeeper
+  mke-elasticsearch:
+    image: elastic/elasticsearch:8.12.1
+    container_name: mke-elasticsearch
+    hostname: mke-es
+    networks:
+      - mke   # 指定专属网络
+    ports:
+      - "9200:9200" #节点外部通信接口
+      - "9300:9300" # es集群节点之间的通信接口
+    environment:
+      - TZ=Asia/Shanghai
+      - "ES_JAVA_OPTS=-Xms3072m -Xmx3072m" # 设置JAVA虚拟机内存占用大小
+    privileged: true
+    ulimits: # 栈内存的上限
+      memlock:
+        soft: -1    # 不限制警告线
+        hard: -1    # 不限制实际使用线
+    volumes:
+      - ./elasticsearch/data:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:rw
+      - ./elasticsearch/config/log4j2.properties:/usr/share/elasticsearch/config/log4j2.properties:rw
+      - ./elasticsearch/config/log4j2.file.properties:/usr/share/elasticsearch/config/log4j2.file.properties:rw
+      - ./elasticsearch/plugins:/usr/share/elasticsearch/plugins:rw
+      - ./elasticsearch/logs:/usr/share/elasticsearch/logs:rw
+  mke-kibana:
+    image: elastic/kibana:8.12.1
+    container_name: mke-kibana
+    environment:
+      - TZ=Asia/Shanghai
+    hostname: mke-kibana
+    networks:
+      - mke
+    depends_on:
+      - mke-elasticsearch
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:rw
+    ports:
+      - "5601:5601"
+  mke-mysql:
+    build: ./mysql
+    container_name: mke-mysql
+    hostname: mke-mysql
+    networks:
+      - mke
+    environment:
+      MYSQL_ROOT_PASSWORD: password #初始化root密码
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql/config:/etc/mysql/conf.d
+      - ./mysql/data:/var/lib/mysql:rw
+      - ./mysql/logs:/var/log:rw

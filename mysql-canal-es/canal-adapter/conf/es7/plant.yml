@@ -1,0 +1,12 @@
+dataSourceKey: defaultDS
+destination: worldplant
+groupId: g1
+esMapping:
+  _index: worldplant
+  _id: id
+  sql: "select
+          id,
+          name,
+          type
+        from plant"
+  commitBatch: 3000

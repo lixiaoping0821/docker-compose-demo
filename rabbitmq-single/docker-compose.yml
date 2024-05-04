@@ -1,0 +1,17 @@
+version: '3'
+services:
+  rabbitmq-single:
+    image: rabbitmq:3.11.9-management
+    container_name: rabbit_mq
+    volumes:
+      - ./logs:/var/log/rabbitmq:rw
+      - ./data:/var/lib/rabbitmq/mnesia:rw
+      - ./conf:/etc/rabbitmq/conf.d:rw
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      TZ: Asia/Shanghai
+      RABBITMQ_DEFAULT_VHOST: '/'
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin
