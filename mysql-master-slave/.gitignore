@@ -1,4 +1,8 @@
 /mysql-master/data/
+!/mysql-master/data/.gitkeep
 /mysql-master/logs/
+!/mysql-master/logs/.gitkeep
 /mysql-slave/data/
+!/mysql-slave/data/.gitkeep
 /mysql-slave/logs/
+!/mysql-slave/logs/.gitkeep
