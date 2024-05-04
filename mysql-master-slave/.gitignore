@@ -1,0 +1,4 @@
+/mysql-master/data/
+/mysql-master/logs/
+/mysql-slave/data/
+/mysql-slave/logs/

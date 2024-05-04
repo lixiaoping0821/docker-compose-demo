@@ -1,0 +1,31 @@
+[mysqld]
+server_id=1  # 服务器标识，主从不能一样
+bind-address = 0.0.0.0
+port = 3306
+log-error = /var/log/mysql/error.log
+slow_query_log = ON
+slow_query_log_file = /var/log/mysql/slowquery.log
+long_query_time = 3
+log-queries-not-using-indexes = /var/log/mysql/nouseindex.log
+log-bin = mysql-bin       # 启用二进制日志
+binlog_format = STATEMENT # 设置 logbin 格式
+#解决mysql8.0的group by问题
+sql_mode='STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION'
+user=root
+collation-server = utf8mb4_general_ci
+character-set-server = utf8mb4
+max_connections = 50
+max_user_connections = 50
+max_connect_errors = 30
+wait_timeout = 86400
+interactive_timeout = 86400
+default-authentication-plugin = mysql_native_password
+default-storage-engine = INNODB
+default-time-zone = '+8:00' # 设置默认时区为东8区
+
+[client]
+port = 3306
+default-character-set = utf8mb4
+
+[mysql]
+default-character-set = utf8mb4

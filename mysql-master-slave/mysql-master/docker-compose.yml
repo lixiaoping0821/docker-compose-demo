@@ -1,0 +1,21 @@
+version: '3'
+networks:
+  mysql-cluster:
+    external: true
+services:
+  mysql-master:
+    build: .
+    container_name: mysql-master
+    hostname: mysql-master
+    networks:
+      - mysql-cluster
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      TZ: Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./config:/etc/mysql/conf.d #这个挂载有问题，需要进去容器改成644权限
+      # - ./config:/etc/my.cnf.d
+      - ./data:/var/lib/mysql
+      - ./logs:/var/log/mysql
