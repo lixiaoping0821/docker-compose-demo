@@ -1,0 +1,30 @@
+input {
+	beats {
+		port => 5044
+	}
+
+# 	tcp {
+# 		port => 5000
+# 	}
+#     file {
+#         path => "/usr/share/logstash/pipeline/logs/access.log"
+#         codec => "json"
+#         start_position => "beginning"
+#     }
+}
+
+# filter {
+#     json {
+#         source => "message"
+#         skip_on_invalid_json => true
+#     }
+# }
+
+output {
+    if [fields][service] == "nginx-log" {
+	    elasticsearch {
+		    hosts => ["http://elk-es:9200"]
+		    index => "nginx-log-%{+YYYY.MM.dd}"
+	    }
+	}
+}

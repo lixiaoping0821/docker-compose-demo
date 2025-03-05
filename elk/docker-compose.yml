@@ -82,6 +82,8 @@ services:
     hostname: elk-nginx
     networks:
       - elk
+    environment:
+      - TZ=Asia/Shanghai
     expose:
       - 80
     ports:

@@ -1,7 +1,7 @@
 cluster.name:  "elk_es_cluster"  # 配置的集群名称，默认是elasticsearch
 node.name: "elk_es_node01"       # 当前ES实例的节点名
 discovery.type: single-node    # 样例采用单节点运行方式
-node.roles: [master,data,remote_cluster_client]  # 8.X的版本，需要使用 node.roles配置角色
+node.roles: [master,data,remote_cluster_client,ingest]  # 8.X的版本，需要使用 node.roles配置角色
 bootstrap.memory_lock: true      # 启用内存限制，避免硬盘JVM垃圾回收引起的频繁读取硬盘
 network.host: 0.0.0.0            # 同时绑定外部访问和节点之间交互的IP地址
 http.port: 9200                  # 外部访问端口
