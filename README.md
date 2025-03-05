@@ -7,7 +7,5 @@
 
 - 命令行运行 ```docker-compose up -d```
 
-#### 公众号
-公众号中有文章对样例进行详细的阐述。
+参考了大佬：https://gitee.com/kun81/docker-compose-demo
 
-![](jygzhqr.jpg)
